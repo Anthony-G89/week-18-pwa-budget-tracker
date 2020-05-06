@@ -1,4 +1,4 @@
-const FILES_TO_CACHE = ["/",  "/index.html", "index.js",];
+const FILES_TO_CACHE = ["/", "/index.js", "/styles.css", "/indexDB.js","/manifest.webmanifest" ];
 
 const CACHE_NAME = "static-cache-v2";
 const DATA_CACHE_NAME = "data-cache-v1";
@@ -35,7 +35,7 @@ self.addEventListener("activate", function(evt) {
 
 // fetch
 self.addEventListener("fetch", function(evt) {
-  if (evt.request.url.includes("/api/transaction")) {
+  if (evt.request.url.includes("/api/")) {
     evt.respondWith(
       caches.open(DATA_CACHE_NAME).then(cache => {
         return fetch(evt.request)
@@ -55,4 +55,16 @@ self.addEventListener("fetch", function(evt) {
     );
 
     return;
-}});
+}
+evt.respondWith(
+  // open up the static cache, and once that is open
+  caches.open(CACHE_NAME).then(cache => {
+    // check if the item we are trying to fetch is in the cache
+    return cache.match(evt.request).then(response => {
+      // if the cache returned a response, return that, otherwise actually
+      // fetch the resource from the server
+      return response || fetch(evt.request);
+    });
+  })
+);
+});

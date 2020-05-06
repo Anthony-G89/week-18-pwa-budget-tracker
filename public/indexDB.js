@@ -1,3 +1,4 @@
+let db;
 
 const request = indexedDB.open("budget,", 1);
 
@@ -23,8 +24,8 @@ function saveRecord(record) {
 
     const store = transaction.objectStore("pending");
 
-    const getAll = store.add(record)
-}
+    store.add(record)
+};
 
 function checkDatabase() {
     const transaction = db.transaction(["pending"], "readwrite");
@@ -35,7 +36,7 @@ function checkDatabase() {
 
     getAll.onsuccess = function () {
         if (getAll.result.length > 0) {
-            fetch("/api/transaction", {
+            fetch("/api/transaction/bulk", {
                 method: "POST",
                 body: JSON.stringify(getAll.result),
                 headers: {
@@ -43,16 +44,16 @@ function checkDatabase() {
                     "Content-Type": "application/json"
                 }
             })
-            .then(data => data.json())
-            .then(function(){
-                const transaction = db.transaction(["pending"], "readwrite");
+                .then(response => response.json())
+                .then(function () {
+                    const transaction = db.transaction(["pending"], "readwrite");
 
-                // access your pending object store
-                const store = transaction.objectStore("pending");
-                  
-                // clear all items in your store
-                store.clear();
-            });
+                    // access your pending object store
+                    const store = transaction.objectStore("pending");
+
+                    // clear all items in your store
+                    store.clear();
+                });
         }
     };
 
