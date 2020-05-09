@@ -22,6 +22,8 @@ The user will be able to add expenses and deposits to their budget with or witho
 
  ## Screen Shots of App
 
+ ![home](/public/imgs/budget-tracker.png)
+
 
  ---
  ## Questions
